@@ -5,6 +5,34 @@
     <title>DomPlus – Бърза поръчка без регистрация</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', 'ТВОЯ_PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+
+    <script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;
+  var ttq=w[t]=w[t]||[];
+  ttq.methods=["page","track","identify"];
+  ttq.setAndDefer=function(t,e){t[e]=function(){
+    t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}; 
+  for(var i=0;i<ttq.methods.length;i++)
+    ttq.setAndDefer(ttq,ttq.methods[i]);
+  ttq.load('ТВОЯ_TIKTOK_PIXEL_ID');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -154,7 +182,6 @@
     </div>
 
     <!-- ФОРМА БЕЗ РЕГИСТРАЦИЯ -->
-    <form action="https://formsubmit.co/DommPluss@mail.com" method="POST">
         <h2>Бърза поръчка</h2>
 
         <!-- Продукт -->
@@ -184,7 +211,44 @@ function selectProduct(product) {
     document.getElementById("productField").value = product;
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
+
+document.querySelector("form").addEventListener("submit", function(e) {
+    e.preventDefault(); // спира стандартното изпращане на формата
+
+    const product = document.getElementById("productField").value;
+    const nameVal = this.querySelector('[name="Име"]').value;
+    const phoneVal = this.querySelector('[name="Телефон"]').value;
+    const addressVal = this.querySelector('[name="Адрес"]').value;
+
+    // 1️⃣ Google Sheets POST
+    fetch("https://docs.google.com/forms/d/e/1NYBLOh4S90ZPxWpaIVCaGY0efo_5a3nUC4mSmCbWvVE/formResponse", {
+        method: "POST",
+        mode: "no-cors",
+        body: new URLSearchParams({
+            "entry.399546571": product,
+            "entry.2031584286": nameVal,
+            "entry.947534758": phoneVal,
+            "entry.535068393": addressVal
+        })
+    });
+
+    // 2️⃣ Telegram notification
+    const TELEGRAM_URL = "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage";
+    const CHAT_ID = "YOUR_CHAT_ID";
+    const message = `Нова поръчка:\nПродукт: ${product}\nИме: ${nameVal}\nТелефон: ${phoneVal}\nАдрес: ${addressVal}`;
+
+    fetch(`${TELEGRAM_URL}?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`);
+
+    // 3️⃣ Redirect към Thank-you page
+    window.location.href = "thank-you.html";
+
+    // 4️⃣ Facebook Pixel / TikTok Conversion (пример)
+    if(typeof fbq !== 'undefined'){ fbq('track', 'Purchase'); }
+    if(typeof ttq !== 'undefined'){ ttq.track('CompletePayment'); }
+});
 </script>
+
 
 </body>
 </html>
+
