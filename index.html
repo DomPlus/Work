@@ -1,43 +1,128 @@
-<script>
-  // Функция за избор на продукт
-  function selectProduct(product) {
-      document.getElementById("productField").value = product;
-  }
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>DomPlus – Бърза поръчка без регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; color:#333; }
+        header { background:#111; color:white; padding:30px 15px; text-align:center; }
+        header h1 { font-size:2.5em; }
+        .container { max-width:1100px; margin:auto; padding:20px; }
+        .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+        .product { background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align:center; }
+        .product img { width:100%; max-height:200px; object-fit:cover; border-radius:6px; }
+        .price { font-size:22px; color:#e63946; margin:10px 0; }
+        form { background:white; padding:20px; margin-top:40px; border-radius:8px; }
+        input, textarea { width:100%; padding:10px; margin:8px 0; font-size:16px; }
+        button { background:#1d3557; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:5px; cursor:pointer; }
+        button:hover { background:#457b9d; }
+        footer { text-align:center; padding:20px; background:#111; color:white; margin-top:40px; }
+        label { font-weight:bold; display:block; margin-top:15px; }
+    </style>
+</head>
+<body>
 
-  // Submit listener за формата
+<header>
+    <h1>DomPlus</h1>
+    <p>Практични продукти за дома • Плащане при получаване • Бърза доставка</p>
+</header>
+
+<div class="container">
+
+    <div class="products">
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=Органайзер+за+дрехи">
+            <h3>Сгъваем органайзер за дрехи</h3>
+            <p>Повече място и ред в гардероба.</p>
+            <div class="price">29 лв</div>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=LED+лампа">
+            <h3>LED нощна лампа със сензор</h3>
+            <p>Светва автоматично при движение.</p>
+            <div class="price">24 лв</div>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=Кухненски+органайзер">
+            <h3>Кухненски органайзер</h3>
+            <p>Ред и удобство във всяко чекмедже.</p>
+            <div class="price">34 лв</div>
+        </div>
+    </div>
+
+    <!-- Multi-product форма -->
+    <form id="orderForm">
+        <h2>Форма за поръчка</h2>
+
+        <label>Сгъваем органайзер за дрехи (брой):</label>
+        <input type="number" name="productOrganizer" value="0" min="0">
+
+        <label>LED нощна лампа със сензор (брой):</label>
+        <input type="number" name="productLED" value="0" min="0">
+
+        <label>Кухненски органайзер (брой):</label>
+        <input type="number" name="productKitchen" value="0" min="0">
+
+        <h3>Данни за контакт</h3>
+        <input type="text" name="Име" placeholder="Вашето име" required>
+        <input type="tel" name="Телефон" placeholder="Телефон" required>
+        <input type="text" name="Адрес" placeholder="Адрес за доставка" required>
+
+        <label>Бележка / допълнителна информация:</label>
+        <textarea name="Бележка" placeholder="Напишете всичко, което желаете"></textarea>
+
+        <button type="submit">Изпрати поръчката</button>
+    </form>
+
+</div>
+
+<footer>
+    © 2026 DomPlus – Всички права запазени
+</footer>
+
+<!-- Скрипт за multi-product форма -->
+<script>
   const form = document.getElementById("orderForm");
   form.addEventListener("submit", function(e) {
-      e.preventDefault(); // спира default submit
+      e.preventDefault();
 
-      const product = document.getElementById("productField").value;
+      const qtyOrganizer = this.querySelector('[name="productOrganizer"]').value || 0;
+      const qtyLED = this.querySelector('[name="productLED"]').value || 0;
+      const qtyKitchen = this.querySelector('[name="productKitchen"]').value || 0;
+
       const nameVal = this.querySelector('[name="Име"]').value;
       const phoneVal = this.querySelector('[name="Телефон"]').value;
       const addressVal = this.querySelector('[name="Адрес"]').value;
+      const noteVal = this.querySelector('[name="Бележка"]').value;
 
-      if(!product) {
-          alert("Моля, изберете продукт преди да поръчате!");
+      if(qtyOrganizer == 0 && qtyLED == 0 && qtyKitchen == 0){
+          alert("Моля, въведете количество за поне един продукт!");
           return;
       }
 
-      // --- 1️⃣ Изпращане към Google Form / Sheets ---
+      // Изпращане към Google Form / Sheets
       fetch("https://docs.google.com/forms/d/e/1NYBLOh4S90ZPxWpaIVCaGY0efo_5a3nUC4mSmCbWvVE/formResponse", {
           method: "POST",
           mode: "no-cors",
           body: new URLSearchParams({
-              "entry.2031584286": product,
-              "entry.535068393": nameVal,
-              "entry.199661144": phoneVal,
-              "entry.947534758": addressVal
+              "entry.2031584286": qtyOrganizer,
+              "entry.535068393": qtyLED,
+              "entry.947534758": qtyKitchen,
+              "entry.199661144": noteVal
           })
       });
 
-      // --- 2️⃣ Pixel tracking (ако са добавени) ---
-      if(typeof fbq !== 'undefined') fbq('track', 'Purchase');        // Facebook
-      if(typeof ttq !== 'undefined') ttq.track('CompletePayment');   // TikTok
+      // Pixel tracking
+      if(typeof fbq !== 'undefined') fbq('track', 'Purchase');
+      if(typeof ttq !== 'undefined') ttq.track('CompletePayment');
 
-      // --- 3️⃣ Redirect към thank-you.html ---
+      // Redirect
       window.location.href = "thank-you.html";
-
-      // --- 4️⃣ Telegram уведомление (по-късно може да се добави) ---
   });
 </script>
+
+</body>
+</html>
