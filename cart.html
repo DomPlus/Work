@@ -5,203 +5,114 @@
 <title>DomPlus – Кошница</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4}
-header{background:#111;color:#fff;padding:20px;text-align:center}
-.container{max-width:1000px;margin:auto;padding:20px}
-.cart-item{
-    display:flex;
-    align-items:center;
-    background:#fff;
-    margin-bottom:15px;
-    padding:15px;
-    border-radius:8px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1)
-}
-.cart-item img{
-    width:100px;
-    height:80px;
-    object-fit:cover;
-    border-radius:6px;
-    margin-right:15px
-}
-.cart-details{flex:1}
-.qty-controls button{
-    padding:5px 10px;
-    font-size:16px;
-    margin:0 5px;
-}
-.cart-actions button{
-    background:#e63946;
-    color:#fff;
-    border:none;
-    padding:8px 12px;
-    border-radius:5px;
-    cursor:pointer
-}
-.total{
-    background:#fff;
-    padding:20px;
-    border-radius:8px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    text-align:right;
-    font-size:20px;
-    margin-top:20px
-}
-form{
-    background:#fff;
-    padding:20px;
-    border-radius:8px;
-    margin-top:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1)
-}
-form input, form textarea, form select{
-    width:100%;
-    padding:10px;
-    margin:8px 0;
-    font-size:16px
-}
-form button{
-    background:#1d3557;
-    color:#fff;
-    border:none;
-    padding:12px;
-    font-size:18px;
-    border-radius:5px;
-    cursor:pointer;
-    width:100%
-}
-.empty{text-align:center;font-size:20px;margin-top:40px}
-a{color:white;text-decoration:none}
+body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4;color:#333}
+header{background:#111;color:white;padding:30px 15px;text-align:center}
+header h1{font-size:2.5em;margin:0}
+.container{max-width:800px;margin:auto;padding:20px}
+.cart-item{display:flex;align-items:center;background:#fff;margin-bottom:10px;padding:10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.cart-item img{width:80px;height:60px;object-fit:cover;border-radius:6px;margin-right:10px}
+.cart-item-details{flex:1}
+.cart-item-details strong{display:block;font-size:16px}
+.cart-total{font-size:20px;font-weight:bold;text-align:right;margin-top:10px}
+button{background:#1d3557;color:white;border:none;padding:10px 16px;font-size:16px;border-radius:5px;cursor:pointer;margin-top:10px}
+button:hover{background:#457b9d}
+form{margin-top:20px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+form input, form select, form textarea{width:100%;padding:10px;margin:5px 0 15px 0;border-radius:4px;border:1px solid #ccc;font-size:16px}
+form button{width:100%}
 </style>
 </head>
 <body>
 
 <header>
-<h1>🛒 Кошница – DomPlus</h1>
-<p><a href="index.html">⬅ Обратно към магазина</a></p>
+<h1>DomPlus – Кошница</h1>
 </header>
 
-<div class="container" id="cart-container"></div>
+<div class="container" id="cart-container">
+<!-- Продукти в кошницата ще се рендират тук -->
+</div>
 
-<form
-action="https://docs.google.com/forms/d/e/1FAIpQLSdZEXO7-9dUGkGqOwWVCxuhe9ytA4Io35l0plXtniCAdLRuKQ/formResponse"
-method="POST"
-target="_self">
-
-<!-- ПОРЪЧКА (скрита за продукти) -->
-<input type="hidden" name="entry.1614692332" id="orderData">
-
-<!-- АДРЕС -->
-<input type="text" name="entry.696596733" placeholder="Адрес" required>
-
-<!-- ТЕЛЕФОН -->
-<input type="tel" name="entry.1463389063" placeholder="Телефон" required>
-
-<!-- СВОБОДЕН ТЕКСТ -->
-<textarea name="entry.142323037" placeholder="Бележка към поръчката"></textarea>
-
-<!-- КУРИЕР -->
-<select name="entry.803736456" required>
-    <option value="">Куриерска фирма</option>
-    <option value="Еконт">Еконт</option>
-    <option value="Спиди">Спиди</option>
-</select>
-
-<!-- ИМЕ -->
-<input type="text" name="entry.416079699" placeholder="Име" required>
-
-<button type="submit">Изпрати поръчката</button>
+<div class="container" id="order-form-container" style="display:none;">
+<h2>Попълнете информация за поръчката</h2>
+<form id="order-form" action="https://docs.google.com/forms/d/e/1FAIpQLSdZEXO7-9dUGkGqOwWVCxuhe9ytA4Io35l0plXtniCAdLRuKQ/formResponse" method="POST" target="_self">
+    <label>Име и фамилия</label>
+    <input type="text" name="entry.1614692332" required>
+    <label>Адрес</label>
+    <input type="text" name="entry.1463389063" required>
+    <label>Куриерска фирма</label>
+    <input type="text" name="entry.142323037" required>
+    <label>Свободен текст</label>
+    <textarea name="entry.416079699" rows="4"></textarea>
+    <input type="hidden" name="entry.696596733" id="total-amount">
+    <button type="submit">Изпрати поръчката</button>
 </form>
+</div>
 
 <script>
-// Вземане на кошницата
+// Кошница от localStorage
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const container = document.getElementById("cart-container");
-const form = document.querySelector("form");
-const orderData = document.getElementById("orderData");
-
-// Запис на кошницата
-function saveCart(){
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
 
 // Рендиране на кошницата
 function renderCart(){
-    container.innerHTML = "";
-
-    if(cart.length === 0){
-        container.innerHTML = "<p class='empty'>Кошницата е празна</p>";
+    container.innerHTML="";
+    if(cart.length===0){
+        container.innerHTML="<p style='text-align:center;font-size:20px;'>Кошницата е празна</p>";
+        document.getElementById("order-form-container").style.display="none";
         return;
     }
-
     let total = 0;
-    let text = "";
-
-    cart.forEach((item,index)=>{
+    cart.forEach(item=>{
         total += item.price * item.qty;
-        text += `${item.name} x ${item.qty} = ${item.price * item.qty} лв\n`;
-
         const div = document.createElement("div");
-        div.className = "cart-item";
-
-        div.innerHTML = `
-            <img src="${item.image}">
-            <div class="cart-details">
-                <h3>${item.name}</h3>
-                <p>Цена: ${item.price} лв</p>
-                <div class="qty-controls">
-                    <button onclick="changeQty(${index},-1)">−</button>
-                    <strong>${item.qty}</strong>
-                    <button onclick="changeQty(${index},1)">+</button>
-                </div>
-                <p><strong>${item.price * item.qty} лв</strong></p>
-            </div>
-            <div class="cart-actions">
-                <button onclick="removeItem(${index})">✖</button>
+        div.className="cart-item";
+        div.innerHTML=`
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
+            <div class="cart-item-details">
+                <strong>${item.name}</strong>
+                ${item.qty} x ${item.price} лв = ${item.price*item.qty} лв
             </div>
         `;
         container.appendChild(div);
     });
+    const totalDiv = document.createElement("div");
+    totalDiv.className="cart-total";
+    totalDiv.innerText="Общо: " + total + " лв";
+    container.appendChild(totalDiv);
 
-    container.innerHTML += `<div class="total">Обща сума: <strong>${total} лв</strong></div>`;
-    orderData.value = text + `\nОБЩО: ${total} лв`;
+    // Покажи формата
+    document.getElementById("order-form-container").style.display="block";
+    document.getElementById("total-amount").value = total;
 }
 
-// Промяна на количество
-function changeQty(index,delta){
-    cart[index].qty += delta;
-    if(cart[index].qty <= 0) cart.splice(index,1);
-    saveCart();
-    renderCart();
-}
-
-// Премахване на артикул
-function removeItem(index){
-    cart.splice(index,1);
-    saveCart();
-    renderCart();
-}
-
-// Първоначално рендиране
 renderCart();
 
-// Благодарствено съобщение след submit
+// Submit на формата без пренасочване
+const form = document.getElementById("order-form");
 form.addEventListener("submit", function(e){
-    // Изчиства кошницата
-    cart = [];
-    saveCart();
-    renderCart();
+    e.preventDefault(); // спира стандартното пренасочване
 
-    // Скриваме формата
-    form.style.display = "none";
+    const data = new FormData(form);
+    fetch(form.action, {
+        method: "POST",
+        mode: "no-cors",
+        body: data
+    }).then(()=>{
+        // Изчиства кошницата
+        cart=[];
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
 
-    // Показваме съобщение
-    const msg = document.createElement("p");
-    msg.style.textAlign = "center";
-    msg.style.fontSize = "22px";
-    msg.style.marginTop = "30px";
-    msg.innerText = "Благодарим за поръчката! Ще се свържем с вас скоро.";
-    form.parentNode.insertBefore(msg, form.nextSibling);
+        // Скрива формата
+        form.style.display="none";
+
+        // Показва благодарствено съобщение
+        const msg = document.createElement("p");
+        msg.style.textAlign="center";
+        msg.style.fontSize="22px";
+        msg.style.marginTop="30px";
+        msg.innerText="Благодарим за поръчката! Ще се свържем с вас скоро.";
+        form.parentNode.insertBefore(msg, form.nextSibling);
+    });
 });
 </script>
 
