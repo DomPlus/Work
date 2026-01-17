@@ -16,8 +16,9 @@ header h1{font-size:2.5em;margin:0}
 .cart-total{font-size:20px;font-weight:bold;text-align:right;margin-top:10px}
 button{background:#1d3557;color:white;border:none;padding:10px 16px;font-size:16px;border-radius:5px;cursor:pointer;margin-top:10px}
 button:hover{background:#457b9d}
-.cart-icon{position:fixed;top:20px;right:20px;cursor:pointer;font-size:24px;background:#e63946;color:white;padding:10px 15px;border-radius:50%;z-index:1000}
-#mini-cart{position:fixed;top:60px;right:20px;width:300px;max-height:400px;overflow-y:auto;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.2);border-radius:8px;display:none;z-index:1001;padding:10px}
+form{margin-top:20px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+form input, form select, form textarea{width:100%;padding:10px;margin:5px 0 15px 0;border-radius:4px;border:1px solid #ccc;font-size:16px}
+form button{width:100%}
 </style>
 </head>
 <body>
@@ -27,23 +28,26 @@ button:hover{background:#457b9d}
 </header>
 
 <div class="container" id="cart-container">
-<!-- Продукти ще се рендират тук -->
+<!-- Продукти в кошницата ще се рендират тук -->
 </div>
 
-<div class="cart-icon" id="cart-icon">
-🛒 <span id="cart-count">0</span>
+<div class="container" id="order-form-container" style="display:none;">
+<h2>Попълнете информация за поръчката</h2>
+<form id="order-form" action="https://docs.google.com/forms/d/e/1FAIpQLSdZEXO7-9dUGkGqOwWVCxuhe9ytA4Io35l0plXtniCAdLRuKQ/formResponse" method="POST" target="_self">
+    <label>Име и фамилия</label>
+    <input type="text" name="entry.1614692332" required>
+    <label>Адрес</label>
+    <input type="text" name="entry.1463389063" required>
+    <label>Куриерска фирма</label>
+    <input type="text" name="entry.142323037" required>
+    <label>Свободен текст</label>
+    <textarea name="entry.416079699" rows="4"></textarea>
+    <input type="hidden" name="entry.696596733" id="total-amount">
+    <button type="submit">Изпрати поръчката</button>
+</form>
 </div>
-
-<div id="mini-cart"></div>
 
 <script>
-// Продукти (примерни, може да се добавят и други)
-const productsData = [
-    {name:"Сгъваем органайзер за дрехи", price:29, image:"https://images.unsplash.com/photo-1616628180050-86ee0499f4f2?auto=format&fit=crop&w=400&q=80", desc:"Повече място и ред в гардероба."},
-    {name:"LED нощна лампа", price:24, image:"https://images.unsplash.com/photo-1601924582975-3020e05864cb?auto=format&fit=crop&w=400&q=80", desc:"Светва автоматично при движение."},
-    {name:"Кухненски органайзер", price:34, image:"https://images.unsplash.com/photo-1599619464936-8f0a88e0c3b0?auto=format&fit=crop&w=400&q=80", desc:"Ред и удобство във всяко чекмедже."}
-];
-
 // Кошница от localStorage
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const container = document.getElementById("cart-container");
@@ -53,6 +57,7 @@ function renderCart(){
     container.innerHTML="";
     if(cart.length===0){
         container.innerHTML="<p style='text-align:center;font-size:20px;'>Кошницата е празна</p>";
+        document.getElementById("order-form-container").style.display="none";
         return;
     }
     let total = 0;
@@ -73,62 +78,42 @@ function renderCart(){
     totalDiv.className="cart-total";
     totalDiv.innerText="Общо: " + total + " лв";
     container.appendChild(totalDiv);
+
+    // Покажи формата
+    document.getElementById("order-form-container").style.display="block";
+    document.getElementById("total-amount").value = total;
 }
 
-// Мини кошница
-const miniCart = document.getElementById("mini-cart");
-function renderMiniCart(){
-    miniCart.innerHTML = "";
-    if(cart.length === 0){
-        miniCart.innerHTML = "<p style='text-align:center'>Кошницата е празна</p>";
-        return;
-    }
-    let total = 0;
-    cart.forEach(item=>{
-        total += item.price * item.qty;
-        const div = document.createElement("div");
-        div.style.display="flex";
-        div.style.marginBottom="8px";
-        div.innerHTML = `
-            <img src="${item.image}" style="width:50px;height:40px;object-fit:cover;margin-right:10px;border-radius:4px;">
-            <div style="flex:1">
-                <strong>${item.name}</strong><br>
-                ${item.qty} x ${item.price} лв = ${item.price*item.qty} лв
-            </div>
-        `;
-        miniCart.appendChild(div);
-    });
-    const totalDiv = document.createElement("div");
-    totalDiv.style.fontWeight="bold";
-    totalDiv.style.textAlign="right";
-    totalDiv.style.borderTop="1px solid #ccc";
-    totalDiv.style.paddingTop="5px";
-    totalDiv.innerText = "Общо: " + total + " лв";
-    miniCart.appendChild(totalDiv);
-}
-
-// Показване / скриване на мини кошницата при hover
-const cartIcon = document.getElementById("cart-icon");
-cartIcon.addEventListener("mouseenter", ()=>{
-    renderMiniCart();
-    miniCart.style.display="block";
-});
-cartIcon.addEventListener("mouseleave", ()=>{
-    miniCart.style.display="none";
-});
-miniCart.addEventListener("mouseenter", ()=> miniCart.style.display="block");
-miniCart.addEventListener("mouseleave", ()=> miniCart.style.display="none");
-
-// Брояч на артикули
-function updateCartCount(){
-    const count = cart.reduce((acc,i)=>acc+i.qty,0);
-    document.getElementById("cart-count").innerText = count;
-}
-
-// Инициализация
-updateCartCount();
 renderCart();
-renderMiniCart();
+
+// Submit на формата без пренасочване
+const form = document.getElementById("order-form");
+form.addEventListener("submit", function(e){
+    e.preventDefault(); // спира стандартното пренасочване
+
+    const data = new FormData(form);
+    fetch(form.action, {
+        method: "POST",
+        mode: "no-cors",
+        body: data
+    }).then(()=>{
+        // Изчиства кошницата
+        cart=[];
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
+
+        // Скрива формата
+        form.style.display="none";
+
+        // Показва благодарствено съобщение
+        const msg = document.createElement("p");
+        msg.style.textAlign="center";
+        msg.style.fontSize="22px";
+        msg.style.marginTop="30px";
+        msg.innerText="Благодарим за поръчката! Ще се свържем с вас скоро.";
+        form.parentNode.insertBefore(msg, form.nextSibling);
+    });
+});
 </script>
 
 </body>
