@@ -2,114 +2,92 @@
 <html lang="bg">
 <head>
 <meta charset="UTF-8">
-<title>DomPlus – Кошница</title>
+<title>DomPlus – Онлайн магазин</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body { font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333; }
-header { background:#111; color:white; padding:20px; text-align:center; }
-header h1 { font-size:2em; margin:0; }
-.container { max-width:700px; margin:auto; padding:20px; background:white; border-radius:8px; margin-top:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-.cart-item { display:flex; justify-content: space-between; margin-bottom:10px; }
-.cart-total { font-weight:bold; font-size:18px; margin-top:10px; }
-input, select, textarea, button { width:100%; padding:10px; margin:8px 0; font-size:16px; }
-button { background:#1d3557; color:white; border:none; border-radius:5px; cursor:pointer; }
+header { background:#111; color:white; padding:20px; text-align:center; position:relative; }
+header h1 { font-size:2.5em; margin:0; }
+.cart-icon { position:absolute; right:20px; top:20px; cursor:pointer; }
+.cart-icon span { background:red; color:white; border-radius:50%; padding:3px 7px; font-weight:bold; margin-left:5px; }
+.container { max-width:1100px; margin:auto; padding:20px; }
+.products { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+.product { background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align:center; }
+.product img { width:100%; max-height:200px; object-fit:cover; border-radius:6px; }
+.price { font-size:22px; color:#e63946; margin:10px 0; }
+button { background:#1d3557; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:5px; cursor:pointer; margin-top:5px; }
 button:hover { background:#457b9d; }
+input.qty { width:60px; text-align:center; }
 </style>
 </head>
 <body>
 
 <header>
-<h1>Вашата кошница</h1>
+<h1>DomPlus</h1>
+<p>Практични продукти за дома • Бърза доставка</p>
+<div class="cart-icon" onclick="window.location.href='cart.html'">
+🛒 Кошница <span id="cartCount">0</span>
+</div>
 </header>
 
 <div class="container">
-<div id="cartItems"></div>
-<div class="cart-total" id="cartTotal">Обща цена: 0 лв</div>
+<div class="products">
+    <div class="product" data-name="Сгъваем органайзер за дрехи" data-price="29">
+        <img src="https://via.placeholder.com/400x250?text=Органайзер+за+дрехи">
+        <h3>Сгъваем органайзер за дрехи</h3>
+        <p>Повече място и ред в гардероба.</p>
+        <div class="price">29 лв</div>
+        <input type="number" value="1" min="1" class="qty">
+        <button class="add-to-cart">Добави в кошницата</button>
+    </div>
 
-<h3>Данни за поръчка</h3>
-<form id="orderForm">
-<label>Име:</label>
-<input type="text" name="Име" required>
+    <div class="product" data-name="LED нощна лампа" data-price="24">
+        <img src="https://via.placeholder.com/400x250?text=LED+лампа">
+        <h3>LED нощна лампа със сензор</h3>
+        <p>Светва автоматично при движение.</p>
+        <div class="price">24 лв</div>
+        <input type="number" value="1" min="1" class="qty">
+        <button class="add-to-cart">Добави в кошницата</button>
+    </div>
 
-<label>Телефон:</label>
-<input type="tel" name="Телефон" required>
-
-<label>Адрес:</label>
-<input type="text" name="Адрес" required>
-
-<label>Куриерска фирма:</label>
-<select name="Куриер" required>
-    <option value="">Избери куриер</option>
-    <option value="Econt">Econt</option>
-    <option value="Speedy">Speedy</option>
-    <option value="SPARK">SPARK</option>
-</select>
-
-<label>Бележка / допълнителна информация:</label>
-<textarea name="Бележка"></textarea>
-
-<button type="submit">Изпрати поръчката</button>
-</form>
+    <div class="product" data-name="Кухненски органайзер" data-price="34">
+        <img src="https://via.placeholder.com/400x250?text=Кухненски+органайзер">
+        <h3>Кухненски органайзер</h3>
+        <p>Ред и удобство във всяко чекмедже.</p>
+        <div class="price">34 лв</div>
+        <input type="number" value="1" min="1" class="qty">
+        <button class="add-to-cart">Добави в кошницата</button>
+    </div>
+</div>
 </div>
 
 <script>
 // ---- JS за кошницата ----
 let cart = JSON.parse(localStorage.getItem('cart')||'[]');
 
-function updateCart() {
-    const cartItems = document.getElementById("cartItems");
-    const cartTotal = document.getElementById("cartTotal");
-    cartItems.innerHTML = "";
-    let total = 0;
-    cart.forEach((item,index)=>{
-        const div = document.createElement("div");
-        div.className="cart-item";
-        div.innerHTML = `<span>${item.name} x ${item.qty} = ${item.price*item.qty} лв</span>
-                         <button onclick="removeItem(${index})">✖</button>`;
-        cartItems.appendChild(div);
-        total += item.price*item.qty;
-    });
-    cartTotal.textContent = `Обща цена: ${total} лв`;
+function updateCartIcon() {
+    const count = cart.reduce((sum,i)=>sum+i.qty,0);
+    document.getElementById('cartCount').textContent = count;
 }
 
-function removeItem(index){
-    cart.splice(index,1);
-    localStorage.setItem('cart',JSON.stringify(cart));
-    updateCart();
-}
+document.querySelectorAll(".add-to-cart").forEach(btn=>{
+    btn.addEventListener("click",function(){
+        const product = this.closest(".product");
+        const name = product.dataset.name;
+        const price = parseFloat(product.dataset.price);
+        const qty = parseInt(product.querySelector(".qty").value);
+        if(qty<1) return;
 
-updateCart();
-
-// ---- JS за submit към Google Form ----
-const form = document.getElementById("orderForm");
-form.addEventListener("submit",function(e){
-    e.preventDefault();
-    if(cart.length===0){ alert("Кошницата е празна!"); return; }
-
-    const nameVal = this.querySelector('[name="Име"]').value;
-    const phoneVal = this.querySelector('[name="Телефон"]').value;
-    const addressVal = this.querySelector('[name="Адрес"]').value;
-    const courierVal = this.querySelector('[name="Куриер"]').value;
-    const noteVal = this.querySelector('[name="Бележка"]').value;
-    const productsText = cart.map(i=>`${i.name} x ${i.qty}`).join(", ");
-
-    fetch("https://docs.google.com/forms/d/e/1NYBLOh4S90ZPxWpaIVCaGY0efo_5a3nUC4mSmCbWvVE/formResponse",{
-        method:"POST",
-        mode:"no-cors",
-        body:new URLSearchParams({
-            "entry.520885605": productsText,
-            "entry.896637083": nameVal,
-            "entry.1626456706": phoneVal,
-            "entry.452652446": addressVal,
-            "entry.1628531338": noteVal,
-            "entry.1111111111": courierVal
-        })
+        const existing = cart.find(i=>i.name===name);
+        if(existing) existing.qty += qty;
+        else cart.push({name, price, qty});
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartIcon();
+        alert(`${name} x${qty} добавен/а в кошницата!`);
     });
-
-    localStorage.removeItem('cart'); // изчиства кошницата
-    alert("Поръчката е изпратена успешно!");
-    window.location.href="thank-you.html";
 });
+
+updateCartIcon();
 </script>
 
 </body>
