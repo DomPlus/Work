@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>DomPlus - Практични продукти за дома</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #111;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5em;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .product {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .product img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .price {
+            font-size: 22px;
+            color: #e63946;
+            margin: 10px 0;
+        }
+        button {
+            background: #1d3557;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #457b9d;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 8px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #111;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DomPlus</h1>
+    <p>Практични продукти за дома • Плащане при получаване • Бърза доставка</p>
+</header>
+
+<div class="container">
+
+    <div class="products">
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=Органайзер+за+дрехи">
+            <h3>Сгъваем органайзер за дрехи</h3>
+            <p>Повече място и ред в гардероба.</p>
+            <div class="price">29 лв</div>
+            <button onclick="selectProduct('Сгъваем органайзер за дрехи - 29 лв')">Поръчай</button>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=LED+лампа">
+            <h3>LED нощна лампа със сензор</h3>
+            <p>Светва автоматично при движение.</p>
+            <div class="price">24 лв</div>
+            <button onclick="selectProduct('LED нощна лампа - 24 лв')">Поръчай</button>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/400x250?text=Кухненски+органайзер">
+            <h3>Кухненски органайзер</h3>
+            <p>Ред и удобство във всяко чекмедже.</p>
+            <div class="price">34 лв</div>
+            <button onclick="selectProduct('Кухненски органайзер - 34 лв')">Поръчай</button>
+        </div>
+    </div>
+
+    <form action="https://formsubmit.co/DommPluss@mail.com" method="POST">
+        <h2>Форма за поръчка</h2>
+
+        <input type="hidden" name="Продукт" id="productField">
+
+        <input type="text" name="Име" placeholder="Вашето име" required>
+        <input type="tel" name="Телефон" placeholder="Телефон" required>
+        <input type="text" name="Адрес" placeholder="Адрес за доставка" required>
+
+        <button type="submit">Изпрати поръчката</button>
+    </form>
+
+</div>
+
+<footer>
+    © 2026 DomPlus – Всички права запазени
+</footer>
+
+<script>
+function selectProduct(product) {
+    document.getElementById("productField").value = product;
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
