@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>DomPlus – Умни решения за дома</title>
+    <title>DomPlus – Бърза поръчка без регистрация</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
@@ -21,13 +21,8 @@
         }
 
         header h1 {
-            font-size: 2.8em;
+            font-size: 2.6em;
             margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.1em;
-            opacity: 0.95;
         }
 
         .container {
@@ -47,24 +42,11 @@
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
             overflow: hidden;
-            position: relative;
             transition: transform 0.3s;
         }
 
         .product:hover {
-            transform: translateY(-5px);
-        }
-
-        .badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #e63946;
-            color: white;
-            padding: 6px 12px;
-            font-size: 13px;
-            border-radius: 20px;
-            font-weight: bold;
+            transform: translateY(-6px);
         }
 
         .product img {
@@ -78,32 +60,21 @@
             text-align: center;
         }
 
-        .product h3 {
-            margin: 10px 0;
-        }
-
-        .product p {
-            font-size: 15px;
-            line-height: 1.5;
-            color: #555;
-        }
-
         .price {
             font-size: 24px;
             color: #e63946;
-            margin: 12px 0;
             font-weight: bold;
+            margin: 10px 0;
         }
 
         button {
             background: #1d3557;
             color: white;
             border: none;
-            padding: 12px 22px;
+            padding: 12px 24px;
             font-size: 16px;
             border-radius: 25px;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
         button:hover {
@@ -112,7 +83,7 @@
 
         form {
             background: white;
-            padding: 25px;
+            padding: 30px;
             margin-top: 50px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
@@ -138,7 +109,6 @@
             background: #111;
             color: white;
             margin-top: 50px;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -146,73 +116,58 @@
 
 <header>
     <h1>DomPlus</h1>
-    <p>Умни решения за дома • Плащане при получаване • Доставка 24–48 ч.</p>
+    <p>Поръчка без регистрация • Плащане при доставка • 24–48 ч.</p>
 </header>
 
 <div class="container">
 
     <div class="products">
-
-        <!-- ПРОДУКТ 1 -->
         <div class="product">
-            <span class="badge">ХИТ 🔥</span>
-            <img src="https://images.unsplash.com/photo-1582738412147-d29a41c6e2c2" alt="Органайзер за дрехи">
+            <img src="https://images.unsplash.com/photo-1582738412147-d29a41c6e2c2" alt="">
             <div class="product-content">
                 <h3>Сгъваем органайзер за дрехи</h3>
-                <p>
-                    Край на хаоса в гардероба!  
-                    Побира до 10 дрехи, спестява място и поддържа идеален ред.
-                </p>
+                <p>Повече място и перфектен ред в гардероба.</p>
                 <div class="price">29 лв</div>
-                <button onclick="selectProduct('Сгъваем органайзер за дрехи – 29 лв')">
-                    Поръчай сега
-                </button>
+                <button onclick="selectProduct('Сгъваем органайзер – 29 лв')">Поръчай</button>
             </div>
         </div>
 
-        <!-- ПРОДУКТ 2 -->
         <div class="product">
-            <span class="badge">НОВО ✨</span>
-            <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c" alt="LED лампа">
+            <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c" alt="">
             <div class="product-content">
-                <h3>LED нощна лампа със сензор</h3>
-                <p>
-                    Светва автоматично при движение.  
-                    Идеална за коридор, баня или детска стая.
-                </p>
+                <h3>LED лампа със сензор</h3>
+                <p>Автоматично осветление при движение.</p>
                 <div class="price">24 лв</div>
-                <button onclick="selectProduct('LED нощна лампа със сензор – 24 лв')">
-                    Поръчай сега
-                </button>
+                <button onclick="selectProduct('LED лампа – 24 лв')">Поръчай</button>
             </div>
         </div>
 
-        <!-- ПРОДУКТ 3 -->
         <div class="product">
-            <span class="badge">-20% 💥</span>
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Кухненски органайзер">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="">
             <div class="product-content">
                 <h3>Кухненски органайзер</h3>
-                <p>
-                    Повече пространство и удобство във всяко чекмедже.  
-                    Перфектен за подправки, прибори и аксесоари.
-                </p>
+                <p>Повече удобство във всяко чекмедже.</p>
                 <div class="price">34 лв</div>
-                <button onclick="selectProduct('Кухненски органайзер – 34 лв')">
-                    Поръчай сега
-                </button>
+                <button onclick="selectProduct('Кухненски органайзер – 34 лв')">Поръчай</button>
             </div>
         </div>
-
     </div>
 
+    <!-- ФОРМА БЕЗ РЕГИСТРАЦИЯ -->
     <form action="https://formsubmit.co/DommPluss@mail.com" method="POST">
         <h2>Бърза поръчка</h2>
 
+        <!-- Продукт -->
         <input type="hidden" name="Продукт" id="productField">
 
+        <!-- FormSubmit настройки -->
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="🛒 Нова поръчка – DomPlus">
+        <input type="hidden" name="_autoresponse" value="Благодарим за поръчката! Ще се свържем с вас до 24 часа.">
+
         <input type="text" name="Име" placeholder="Вашето име" required>
-        <input type="tel" name="Телефон" placeholder="Телефон за връзка" required>
+        <input type="tel" name="Телефон" placeholder="Телефон" required>
         <input type="text" name="Адрес" placeholder="Адрес за доставка" required>
 
         <button type="submit">Изпрати поръчката</button>
@@ -221,7 +176,7 @@
 </div>
 
 <footer>
-    © 2026 DomPlus – Практични продукти за всеки дом
+    © 2026 DomPlus – Всички права запазени
 </footer>
 
 <script>
