@@ -5,90 +5,204 @@
 <title>DomPlus – Кошница</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body { font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333; }
-header { background:#111; color:white; padding:30px 15px; text-align:center; }
-header h1 { font-size:2.5em; margin:0; }
-.container { max-width:900px; margin:auto; padding:20px; }
-.cart-item { display:flex; justify-content: space-between; align-items:center; margin-bottom:15px; background:#fff; padding:10px 15px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-.cart-item span { flex:1; }
-.cart-item input { width:60px; text-align:center; margin:0 10px; }
-.cart-item button { background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; }
-.cart-item button:hover { background:#d62828; }
-.cart-total { font-weight:bold; font-size:18px; margin-top:20px; text-align:right; }
-.back-btn { margin-top:20px; padding:10px 15px; font-size:16px; background:#1d3557; color:white; border:none; border-radius:5px; cursor:pointer; }
-.back-btn:hover { background:#457b9d; }
+body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4}
+header{background:#111;color:#fff;padding:20px;text-align:center}
+.container{max-width:1000px;margin:auto;padding:20px}
+.cart-item{
+    display:flex;
+    align-items:center;
+    background:#fff;
+    margin-bottom:15px;
+    padding:15px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1)
+}
+.cart-item img{
+    width:100px;
+    height:80px;
+    object-fit:cover;
+    border-radius:6px;
+    margin-right:15px
+}
+.cart-details{flex:1}
+.qty-controls button{
+    padding:5px 10px;
+    font-size:16px;
+    margin:0 5px;
+}
+.cart-actions button{
+    background:#e63946;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:5px;
+    cursor:pointer
+}
+.total{
+    background:#fff;
+    padding:20px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    text-align:right;
+    font-size:20px;
+    margin-top:20px
+}
+form{
+    background:#fff;
+    padding:20px;
+    border-radius:8px;
+    margin-top:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1)
+}
+form input, form textarea, form select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    font-size:16px
+}
+form button{
+    background:#1d3557;
+    color:#fff;
+    border:none;
+    padding:12px;
+    font-size:18px;
+    border-radius:5px;
+    cursor:pointer;
+    width:100%
+}
+.empty{text-align:center;font-size:20px;margin-top:40px}
+a{color:white;text-decoration:none}
 </style>
 </head>
 <body>
 
 <header>
-<h1>Вашата кошница</h1>
+<h1>🛒 Кошница – DomPlus</h1>
+<p><a href="index.html">⬅ Обратно към магазина</a></p>
 </header>
 
-<div class="container" id="cartContainer">
-<!-- Артикулите ще се зареждат тук -->
-</div>
+<div class="container" id="cart-container"></div>
 
-<div class="container">
-<div class="cart-total" id="cartTotal">Обща цена: 0 лв</div>
-<button class="back-btn" onclick="window.location.href='index.html'">← Продължи пазаруването</button>
-</div>
+<form
+action="https://docs.google.com/forms/d/e/1FAIpQLSdZEXO7-9dUGkGqOwWVCxuhe9ytA4Io35l0plXtniCAdLRuKQ/formResponse"
+method="POST"
+target="_self">
+
+<!-- ПОРЪЧКА (скрита за продукти) -->
+<input type="hidden" name="entry.1614692332" id="orderData">
+
+<!-- АДРЕС -->
+<input type="text" name="entry.696596733" placeholder="Адрес" required>
+
+<!-- ТЕЛЕФОН -->
+<input type="tel" name="entry.1463389063" placeholder="Телефон" required>
+
+<!-- СВОБОДЕН ТЕКСТ -->
+<textarea name="entry.142323037" placeholder="Бележка към поръчката"></textarea>
+
+<!-- КУРИЕР -->
+<select name="entry.803736456" required>
+    <option value="">Куриерска фирма</option>
+    <option value="Еконт">Еконт</option>
+    <option value="Спиди">Спиди</option>
+</select>
+
+<!-- ИМЕ -->
+<input type="text" name="entry.416079699" placeholder="Име" required>
+
+<button type="submit">Изпрати поръчката</button>
+</form>
 
 <script>
-// Зареждане на кошницата от localStorage
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-const cartContainer = document.getElementById('cartContainer');
-const cartTotalEl = document.getElementById('cartTotal');
+// Вземане на кошницата
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const container = document.getElementById("cart-container");
+const form = document.querySelector("form");
+const orderData = document.getElementById("orderData");
 
+// Запис на кошницата
 function saveCart(){
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
+    localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// Функция за показване на артикулите
+// Рендиране на кошницата
 function renderCart(){
-  cartContainer.innerHTML = "";
-  let total = 0;
+    container.innerHTML = "";
 
-  cart.forEach((item, index) => {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'cart-item';
-    itemDiv.innerHTML = `
-      <span>${item.name}</span>
-      <input type="number" min="1" value="${item.qty}" data-index="${index}">
-      <span>${item.price * item.qty} лв</span>
-      <button data-index="${index}">✖</button>
-    `;
-    cartContainer.appendChild(itemDiv);
+    if(cart.length === 0){
+        container.innerHTML = "<p class='empty'>Кошницата е празна</p>";
+        return;
+    }
 
-    total += item.price * item.qty;
-  });
+    let total = 0;
+    let text = "";
 
-  cartTotalEl.textContent = `Обща цена: ${total} лв`;
+    cart.forEach((item,index)=>{
+        total += item.price * item.qty;
+        text += `${item.name} x ${item.qty} = ${item.price * item.qty} лв\n`;
 
-  // Добавяне на събития за изтриване
-  document.querySelectorAll('.cart-item button').forEach(btn => {
-    btn.addEventListener('click', function(){
-      const i = parseInt(this.dataset.index);
-      cart.splice(i,1);
-      saveCart();
+        const div = document.createElement("div");
+        div.className = "cart-item";
+
+        div.innerHTML = `
+            <img src="${item.image}">
+            <div class="cart-details">
+                <h3>${item.name}</h3>
+                <p>Цена: ${item.price} лв</p>
+                <div class="qty-controls">
+                    <button onclick="changeQty(${index},-1)">−</button>
+                    <strong>${item.qty}</strong>
+                    <button onclick="changeQty(${index},1)">+</button>
+                </div>
+                <p><strong>${item.price * item.qty} лв</strong></p>
+            </div>
+            <div class="cart-actions">
+                <button onclick="removeItem(${index})">✖</button>
+            </div>
+        `;
+        container.appendChild(div);
     });
-  });
 
-  // Добавяне на събития за промяна на количеството
-  document.querySelectorAll('.cart-item input').forEach(input => {
-    input.addEventListener('change', function(){
-      const i = parseInt(this.dataset.index);
-      let val = parseInt(this.value);
-      if(val < 1) val = 1;
-      cart[i].qty = val;
-      saveCart();
-    });
-  });
+    container.innerHTML += `<div class="total">Обща сума: <strong>${total} лв</strong></div>`;
+    orderData.value = text + `\nОБЩО: ${total} лв`;
 }
 
-// Първоначално рендериране
+// Промяна на количество
+function changeQty(index,delta){
+    cart[index].qty += delta;
+    if(cart[index].qty <= 0) cart.splice(index,1);
+    saveCart();
+    renderCart();
+}
+
+// Премахване на артикул
+function removeItem(index){
+    cart.splice(index,1);
+    saveCart();
+    renderCart();
+}
+
+// Първоначално рендиране
 renderCart();
+
+// Благодарствено съобщение след submit
+form.addEventListener("submit", function(e){
+    // Изчиства кошницата
+    cart = [];
+    saveCart();
+    renderCart();
+
+    // Скриваме формата
+    form.style.display = "none";
+
+    // Показваме съобщение
+    const msg = document.createElement("p");
+    msg.style.textAlign = "center";
+    msg.style.fontSize = "22px";
+    msg.style.marginTop = "30px";
+    msg.innerText = "Благодарим за поръчката! Ще се свържем с вас скоро.";
+    form.parentNode.insertBefore(msg, form.nextSibling);
+});
 </script>
 
 </body>
