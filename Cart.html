@@ -2,130 +2,93 @@
 <html lang="bg">
 <head>
 <meta charset="UTF-8">
-<title>DomPlus – Вашата кошница</title>
+<title>DomPlus – Кошница</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body { font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333; }
 header { background:#111; color:white; padding:30px 15px; text-align:center; }
 header h1 { font-size:2.5em; margin:0; }
-.container { max-width:1100px; margin:auto; padding:20px; }
-.cart-item { display:flex; justify-content: space-between; align-items:center; margin-bottom:10px; }
-.cart-item input { width:60px; margin-left:10px; }
-.cart-total { font-weight:bold; font-size:18px; margin-top:10px; }
-button { background:#1d3557; color:white; border:none; padding:10px 15px; font-size:16px; border-radius:5px; cursor:pointer; margin-left:5px; }
-button:hover { background:#457b9d; }
-form input, form select, form textarea { width:100%; padding:10px; margin:8px 0; font-size:16px; }
-label { font-weight:bold; display:block; margin-top:10px; }
-.back-btn { margin-bottom:20px; }
-.delete-btn { background:#e63946; padding:5px 10px; font-size:14px; border-radius:50%; }
-.delete-btn:hover { background:#d62828; }
+.container { max-width:900px; margin:auto; padding:20px; }
+.cart-item { display:flex; justify-content: space-between; align-items:center; margin-bottom:15px; background:#fff; padding:10px 15px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.cart-item span { flex:1; }
+.cart-item input { width:60px; text-align:center; margin:0 10px; }
+.cart-item button { background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; }
+.cart-item button:hover { background:#d62828; }
+.cart-total { font-weight:bold; font-size:18px; margin-top:20px; text-align:right; }
+.back-btn { margin-top:20px; padding:10px 15px; font-size:16px; background:#1d3557; color:white; border:none; border-radius:5px; cursor:pointer; }
+.back-btn:hover { background:#457b9d; }
 </style>
 </head>
 <body>
 
 <header>
-<h1>DomPlus – Кошница</h1>
+<h1>Вашата кошница</h1>
 </header>
 
+<div class="container" id="cartContainer">
+<!-- Артикулите ще се зареждат тук -->
+</div>
+
 <div class="container">
-<button class="back-btn" onclick="window.location.href='index.html'">⬅ Назад към продуктите</button>
-
-<div id="cartItems"></div>
-<div class="cart-total" id="cartTotal"></div>
-
-<h3>Данни за поръчка</h3>
-<form id="orderForm">
-<label>Име:</label>
-<input type="text" name="Име" required>
-
-<label>Телефон:</label>
-<input type="tel" name="Телефон" required>
-
-<label>Адрес:</label>
-<input type="text" name="Адрес" required>
-
-<label>Куриерска фирма:</label>
-<select name="Куриер" required>
-    <option value="">Избери куриер</option>
-    <option value="Econt">Econt</option>
-    <option value="Speedy">Speedy</option>
-    <option value="SPARK">SPARK</option>
-</select>
-
-<label>Бележка / допълнителна информация:</label>
-<textarea name="Бележка"></textarea>
-
-<button type="submit">Изпрати поръчката</button>
-</form>
+<div class="cart-total" id="cartTotal">Обща цена: 0 лв</div>
+<button class="back-btn" onclick="window.location.href='index.html'">← Продължи пазаруването</button>
 </div>
 
 <script>
+// Зареждане на кошницата от localStorage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartContainer = document.getElementById('cartContainer');
+const cartTotalEl = document.getElementById('cartTotal');
 
-function updateCart(){
-    const cartItems = document.getElementById("cartItems");
-    const cartTotal = document.getElementById("cartTotal");
-    cartItems.innerHTML = "";
-    let total = 0;
-    cart.forEach((item,index)=>{
-        const div = document.createElement("div");
-        div.className="cart-item";
-        div.innerHTML=`
-            <span>${item.name}</span>
-            <input type="number" value="${item.qty}" min="1" onchange="updateQty(${index}, this.value)">
-            <span>${item.price*item.qty} лв</span>
-            <button class="delete-btn" onclick="removeItem(${index})">✖</button>
-        `;
-        cartItems.appendChild(div);
-        total += item.price*item.qty;
+function saveCart(){
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+// Функция за показване на артикулите
+function renderCart(){
+  cartContainer.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'cart-item';
+    itemDiv.innerHTML = `
+      <span>${item.name}</span>
+      <input type="number" min="1" value="${item.qty}" data-index="${index}">
+      <span>${item.price * item.qty} лв</span>
+      <button data-index="${index}">✖</button>
+    `;
+    cartContainer.appendChild(itemDiv);
+
+    total += item.price * item.qty;
+  });
+
+  cartTotalEl.textContent = `Обща цена: ${total} лв`;
+
+  // Добавяне на събития за изтриване
+  document.querySelectorAll('.cart-item button').forEach(btn => {
+    btn.addEventListener('click', function(){
+      const i = parseInt(this.dataset.index);
+      cart.splice(i,1);
+      saveCart();
     });
-    cartTotal.textContent = `Обща цена: ${total} лв`;
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
+  });
 
-function updateQty(index,value){
-    cart[index].qty=parseInt(value);
-    if(cart[index].qty < 1) cart[index].qty = 1;
-    updateCart();
-}
-
-function removeItem(index){
-    cart.splice(index,1);
-    updateCart();
-}
-
-updateCart();
-
-// Изпращане към Google Form
-const form = document.getElementById("orderForm");
-form.addEventListener("submit", function(e){
-    e.preventDefault();
-    if(cart.length===0){ alert("Кошницата е празна!"); return; }
-
-    const nameVal = this.querySelector('[name="Име"]').value;
-    const phoneVal = this.querySelector('[name="Телефон"]').value;
-    const addressVal = this.querySelector('[name="Адрес"]').value;
-    const courierVal = this.querySelector('[name="Куриер"]').value;
-    const noteVal = this.querySelector('[name="Бележка"]').value;
-    const productsText = cart.map(i=>`${i.name} x ${i.qty}`).join(", ");
-
-    fetch("https://docs.google.com/forms/d/e/1NYBLOh4S90ZPxWpaIVCaGY0efo_5a3nUC4mSmCbWvVE/formResponse", {
-        method:"POST",
-        mode:"no-cors",
-        body: new URLSearchParams({
-            "entry.520885605": productsText,
-            "entry.896637083": nameVal,
-            "entry.1626456706": phoneVal,
-            "entry.452652446": addressVal,
-            "entry.1628531338": noteVal,
-            "entry.1111111111": courierVal
-        })
+  // Добавяне на събития за промяна на количеството
+  document.querySelectorAll('.cart-item input').forEach(input => {
+    input.addEventListener('change', function(){
+      const i = parseInt(this.dataset.index);
+      let val = parseInt(this.value);
+      if(val < 1) val = 1;
+      cart[i].qty = val;
+      saveCart();
     });
+  });
+}
 
-    localStorage.removeItem('cart');
-    alert("Поръчката е изпратена!");
-    window.location.href="index.html";
-});
+// Първоначално рендериране
+renderCart();
 </script>
 
 </body>
