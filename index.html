@@ -5,19 +5,21 @@
 <title>DomPlus – Онлайн магазин</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body { font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333; }
-header { background:#111; color:white; padding:30px 15px; text-align:center; }
-header h1 { font-size:2.5em; margin:0; }
-.container { max-width:1100px; margin:auto; padding:20px; }
-.products { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
-.product { background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align:center; }
-.product img { width:100%; height:200px; object-fit:cover; border-radius:6px; }
-.price { font-size:22px; color:#e63946; margin:10px 0; }
-button { background:#1d3557; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:5px; cursor:pointer; margin-top:5px; }
-button:hover { background:#457b9d; }
-.qty { width:60px; margin-top:5px; }
-.footer-text { margin-top:50px; background:#fff; padding:20px; border-radius:8px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-.cart-icon { position:fixed; top:20px; right:20px; cursor:pointer; font-size:24px; background:#e63946; color:white; padding:10px 15px; border-radius:50%; z-index:1000;}
+body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4;color:#333}
+header{background:#111;color:white;padding:30px 15px;text-align:center}
+header h1{font-size:2.5em;margin:0}
+.container{max-width:1100px;margin:auto;padding:20px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.product{background:white;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center}
+.product img{width:100%;height:200px;object-fit:cover;border-radius:6px}
+.price{font-size:22px;color:#e63946;margin:10px 0}
+button{background:#1d3557;color:white;border:none;padding:12px 20px;font-size:16px;border-radius:5px;cursor:pointer;margin-top:5px}
+button:hover{background:#457b9d}
+.qty{width:60px;margin-top:5px}
+.footer-text{margin-top:50px;background:#fff;padding:20px;border-radius:8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.cart-icon{position:fixed;top:20px;right:20px;cursor:pointer;font-size:24px;background:#e63946;color:white;padding:10px 15px;border-radius:50%;z-index:1000;display:flex;align-items:center;justify-content:center;position:fixed;}
+.cart-count{position:absolute;top:-8px;right:-8px;background:#fff;color:#e63946;font-size:14px;padding:2px 6px;border-radius:50%;font-weight:bold;}
+#mini-cart{position:fixed;top:60px;right:20px;width:300px;max-height:400px;overflow-y:auto;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.2);border-radius:8px;display:none;z-index:1001;padding:10px;}
 </style>
 </head>
 <body>
@@ -28,63 +30,133 @@ button:hover { background:#457b9d; }
 </header>
 
 <div class="container">
-
-<div class="products">
-    <div class="product" data-name="Сгъваем органайзер за дрехи" data-price="29">
-        <img src="https://images.unsplash.com/photo-1616628180050-86ee0499f4f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400" alt="Органайзер">
-        <h3>Сгъваем органайзер за дрехи</h3>
-        <p>Повече място и ред в гардероба.</p>
-        <div class="price">29 лв</div>
-        <input type="number" value="1" min="1" class="qty">
-        <button class="add-to-cart">Добави в кошницата</button>
-    </div>
-
-    <div class="product" data-name="LED нощна лампа" data-price="24">
-        <img src="https://images.unsplash.com/photo-1601924582975-3020e05864cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400" alt="LED лампа">
-        <h3>LED нощна лампа със сензор</h3>
-        <p>Светва автоматично при движение.</p>
-        <div class="price">24 лв</div>
-        <input type="number" value="1" min="1" class="qty">
-        <button class="add-to-cart">Добави в кошницата</button>
-    </div>
-
-    <div class="product" data-name="Кухненски органайзер" data-price="34">
-        <img src="https://images.unsplash.com/photo-1599619464936-8f0a88e0c3b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400" alt="Кухненски органайзер">
-        <h3>Кухненски органайзер</h3>
-        <p>Ред и удобство във всяко чекмедже.</p>
-        <div class="price">34 лв</div>
-        <input type="number" value="1" min="1" class="qty">
-        <button class="add-to-cart">Добави в кошницата</button>
-    </div>
-</div>
+<div class="products" id="products"></div>
 
 <div class="footer-text">
 <h3>Добре дошли в DomPlus!</h3>
 <p>Предлагаме практични продукти за дома, които улесняват ежедневието ви. Подредете гардероба, организирайте кухнята и осветете дома си по стилен и функционален начин. Пазарувайте лесно, бързо и удобно – с доставка до вашата врата!</p>
 </div>
-
 </div>
 
-<div class="cart-icon" onclick="window.location.href='cart.html'">🛒</div>
+<div class="cart-icon" id="cart-icon" onclick="window.location.href='cart.html'">
+🛒 <span class="cart-count" id="cart-count">0</span>
+</div>
+
+<div id="mini-cart"></div>
 
 <script>
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+// Продукти
+const productsData = [
+    {
+        name:"Сгъваем органайзер за дрехи",
+        price:29,
+        image:"https://images.unsplash.com/photo-1616628180050-86ee0499f4f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400",
+        desc:"Повече място и ред в гардероба."
+    },
+    {
+        name:"LED нощна лампа",
+        price:24,
+        image:"https://images.unsplash.com/photo-1601924582975-3020e05864cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400",
+        desc:"Светва автоматично при движение."
+    },
+    {
+        name:"Кухненски органайзер",
+        price:34,
+        image:"https://images.unsplash.com/photo-1599619464936-8f0a88e0c3b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-4.0.3&q=80&w=400",
+        desc:"Ред и удобство във всяко чекмедже."
+    }
+];
 
-function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
+// Кошница
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-document.querySelectorAll(".add-to-cart").forEach(btn=>{
-    btn.addEventListener("click", function(){
-        const product = this.closest(".product");
-        const name = product.dataset.name;
-        const price = parseFloat(product.dataset.price);
-        const qty = parseInt(product.querySelector(".qty").value);
+// Рендиране на продукти
+const productsContainer = document.getElementById("products");
+productsData.forEach((p,index)=>{
+    const div = document.createElement("div");
+    div.className="product";
+    div.innerHTML=`
+        <img src="${p.image}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="price">${p.price} лв</div>
+        <input type="number" value="1" min="1" class="qty">
+        <button data-index="${index}">Добави в кошницата</button>
+    `;
+    productsContainer.appendChild(div);
+});
+
+// Брояч на артикули
+function updateCartCount(){
+    const count = cart.reduce((acc,i)=>acc+i.qty,0);
+    document.getElementById("cart-count").innerText = count;
+}
+
+// Добавяне в кошницата
+document.querySelectorAll(".product button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        const idx = btn.getAttribute("data-index");
+        const product = productsData[idx];
+        const qty = parseInt(btn.previousElementSibling.value);
         if(qty < 1) return;
-        const existing = cart.find(i=>i.name===name);
+
+        const existing = cart.find(i=>i.name===product.name);
         if(existing){ existing.qty += qty; }
-        else { cart.push({name, price, qty}); }
-        saveCart();
+        else { cart.push({name:product.name, price:product.price, qty, image:product.image}); }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+        renderMiniCart();
     });
 });
+
+// Мини кошница
+const miniCart = document.getElementById("mini-cart");
+function renderMiniCart(){
+    miniCart.innerHTML = "";
+    if(cart.length === 0){
+        miniCart.innerHTML = "<p style='text-align:center'>Кошницата е празна</p>";
+        return;
+    }
+    let total = 0;
+    cart.forEach(item=>{
+        total += item.price * item.qty;
+        const div = document.createElement("div");
+        div.style.display="flex";
+        div.style.marginBottom="8px";
+        div.innerHTML = `
+            <img src="${item.image}" style="width:50px;height:40px;object-fit:cover;margin-right:10px;border-radius:4px;">
+            <div style="flex:1">
+                <strong>${item.name}</strong><br>
+                ${item.qty} x ${item.price} лв = ${item.price*item.qty} лв
+            </div>
+        `;
+        miniCart.appendChild(div);
+    });
+    const totalDiv = document.createElement("div");
+    totalDiv.style.fontWeight="bold";
+    totalDiv.style.textAlign="right";
+    totalDiv.style.borderTop="1px solid #ccc";
+    totalDiv.style.paddingTop="5px";
+    totalDiv.innerText = "Общо: " + total + " лв";
+    miniCart.appendChild(totalDiv);
+}
+
+// Показване / скриване на мини кошницата при hover
+const cartIcon = document.getElementById("cart-icon");
+cartIcon.addEventListener("mouseenter", ()=>{
+    renderMiniCart();
+    miniCart.style.display="block";
+});
+cartIcon.addEventListener("mouseleave", ()=>{
+    miniCart.style.display="none";
+});
+miniCart.addEventListener("mouseenter", ()=> miniCart.style.display="block");
+miniCart.addEventListener("mouseleave", ()=> miniCart.style.display="none");
+
+// Инициализация на броя
+updateCartCount();
+renderMiniCart();
 </script>
 
 </body>
