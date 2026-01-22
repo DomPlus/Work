@@ -84,30 +84,22 @@ a{color:white;text-decoration:none}
 <div class="container" id="cart-container"></div>
 
 <form
+id="orderForm"
 action="https://docs.google.com/forms/d/e/1FAIpQLSdZEXO7-9dUGkGqOwWVCxuhe9ytA4Io35l0plXtniCAdLRuKQ/formResponse"
-method="POST"
-target="_self">
+method="POST">
 
-<!-- ПОРЪЧКА (скрита за продукти) -->
 <input type="hidden" name="entry.1614692332" id="orderData">
 
-<!-- АДРЕС -->
 <input type="text" name="entry.696596733" placeholder="Адрес" required>
-
-<!-- ТЕЛЕФОН -->
 <input type="tel" name="entry.1463389063" placeholder="Телефон" required>
-
-<!-- СВОБОДЕН ТЕКСТ -->
 <textarea name="entry.142323037" placeholder="Бележка към поръчката"></textarea>
 
-<!-- КУРИЕР -->
 <select name="entry.803736456" required>
     <option value="">Куриерска фирма</option>
     <option value="Еконт">Еконт</option>
     <option value="Спиди">Спиди</option>
 </select>
 
-<!-- ИМЕ -->
 <input type="text" name="entry.416079699" placeholder="Име" required>
 
 <button type="submit">Изпрати поръчката</button>
@@ -117,7 +109,7 @@ target="_self">
 // Вземане на кошницата
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const container = document.getElementById("cart-container");
-const form = document.querySelector("form");
+const form = document.getElementById("orderForm");
 const orderData = document.getElementById("orderData");
 
 // Запис на кошницата
@@ -167,7 +159,7 @@ function renderCart(){
     orderData.value = text + `\nОБЩО: ${total} лв`;
 }
 
-// Промяна на количество
+// Количество
 function changeQty(index,delta){
     cart[index].qty += delta;
     if(cart[index].qty <= 0) cart.splice(index,1);
@@ -175,27 +167,32 @@ function changeQty(index,delta){
     renderCart();
 }
 
-// Премахване на артикул
+// Премахване
 function removeItem(index){
     cart.splice(index,1);
     saveCart();
     renderCart();
 }
 
-// Първоначално рендиране
+// Начално
 renderCart();
 
-// Благодарствено съобщение след submit
+// ✅ ОБНОВЕН SUBMIT – без Google съобщение
 form.addEventListener("submit", function(e){
-    // Изчиства кошницата
+    e.preventDefault();
+
+    fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        mode: "no-cors"
+    });
+
     cart = [];
     saveCart();
     renderCart();
 
-    // Скриваме формата
     form.style.display = "none";
 
-    // Показваме съобщение
     const msg = document.createElement("p");
     msg.style.textAlign = "center";
     msg.style.fontSize = "22px";
